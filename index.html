@@ -569,7 +569,7 @@
         <span class="page-badge">כל המילים יחד · סדר אקראי</span>
       </div>
       <div class="card">
-        <p class="subtitle">תופיע מילה בקוריאנית. כתוב/כתבי את התרגום בעברית. אם יש טעות, התשובה תופיע; אחרי 3 טעויות באותה מילה היא תחזור לתור האקראי. אחרי תשובה נכונה תהיה התקדמות אוטומטית קצרה.</p>
+        <p class="subtitle">תופיע מילה בקוריאנית. כתוב/כתבי את התרגום בעברית. אם יש טעות, התשובה לא תופיע; המילה תחזור לתור האקראי ותופיע שוב בהמשך. אחרי תשובה נכונה או שגויה יש מעבר אוטומטי.</p>
         <div class="trainer-grid">
           <div class="prompt-card" aria-live="polite">
             <p class="prompt-label">המילה לתרגום</p>
@@ -590,7 +590,7 @@
               <div class="stat-box"><span class="stat-number" id="vocab-misses">0</span><span class="stat-label">טעויות</span></div>
             </div>
             <div class="progress-bar" aria-hidden="true"><div class="progress-fill" id="vocab-progress"></div></div>
-            <p class="small-note">הבדיקה מתעלמת מסימני פיסוק ורווחים מיותרים, ומקבלת כמה ניסוחים בעברית.</p>
+            <p class="small-note">הבדיקה מקבלת גם כמה ניסוחים בעברית, למשל: ארה״ב / ארצות הברית, תלמיד / סטודנט.</p>
             <button class="btn" type="button" id="vocab-reset">ערבב והתחל מחדש</button>
           </aside>
         </div>
@@ -607,7 +607,7 @@
           <div class="rule-card"><strong>이에요</strong> — אחרי שם או שם עצם שמסתיים בעיצור סופי, כלומר יש 받침.<br><span class="ko">학생 + 이에요 → 학생이에요</span></div>
           <div class="rule-card"><strong>예요</strong> — אחרי שם או שם עצם שמסתיים בתנועה, כלומר אין 받침.<br><span class="ko">앤디 + 예요 → 앤디예요</span></div>
         </div>
-        <p class="subtitle">אם בוחרים נכון — המילה יוצאת מהתרגול. אם בוחרים לא נכון — רואים את התשובה והמילה חוזרת לתור האקראי.</p>
+        <p class="subtitle">אם בוחרים נכון — המילה יוצאת מהתרגול. אם בוחרים לא נכון — רואים את הסיומת הנכונה והמילה חוזרת לתור האקראי. התרגול כולל רק שמות פרטיים ושמות עצם.</p>
         <div class="grammar-panel">
           <div class="prompt-card">
             <p class="prompt-label">בחר/י את הסיומת הנכונה</p>
@@ -816,16 +816,16 @@
     </section>
   </div>
 
-
   <script>
-    const AUTO_NEXT_DELAY = 1000;
+    const AUTO_NEXT_DELAY = 1050;
+    const AUTO_WRONG_DELAY = 1150;
 
     const countryBank = [
       { ko: '이스라엘', he: 'ישראל', answers: ['ישראל'] },
       { ko: '독일', he: 'גרמניה', answers: ['גרמניה'] },
       { ko: '러시아', he: 'רוסיה', answers: ['רוסיה'] },
-      { ko: '미국', he: 'ארה״ב', answers: ['ארצות הברית', 'ארה״ב', 'ארה"ב', 'ארהב', 'אמריקה'] },
-      { ko: '베트남', he: 'וייטנאם', answers: ['וייטנאם', 'ויטנאם', 'ויאטנם'] },
+      { ko: '미국', he: 'ארה״ב', answers: ['ארהב', 'ארה״ב', 'ארה"ב', 'ארצות הברית', 'ארצות־הברית', 'אמריקה'] },
+      { ko: '베트남', he: 'וייטנאם', answers: ['וייטנאם', 'ויאטנם', 'ויטנאם'] },
       { ko: '일본', he: 'יפן', answers: ['יפן'] },
       { ko: '중국', he: 'סין', answers: ['סין'] },
       { ko: '태국', he: 'תאילנד', answers: ['תאילנד'] },
@@ -839,128 +839,129 @@
       { ko: '스페인', he: 'ספרד', answers: ['ספרד'] },
       { ko: '폴란드', he: 'פולין', answers: ['פולין'] },
       { ko: '네덜란드', he: 'הולנד', answers: ['הולנד', 'נדרלנד', 'נדרלנדס', 'ארצות השפלה'] },
-      { ko: '홍콩', he: 'הונג קונג', answers: ['הונג קונג', 'הונגקונג'] },
+      { ko: '홍콩', he: 'הונג קונג', answers: ['הונג קונג', 'הונגקונג', 'הונג־קונג'] },
       { ko: '이집트', he: 'מצרים', answers: ['מצרים'] },
       { ko: '카메룬', he: 'קמרון', answers: ['קמרון'] },
       { ko: '멕시코', he: 'מקסיקו', answers: ['מקסיקו'] },
-      { ko: '샌프란시스코', he: 'סן פרנסיסקו', answers: ['סן פרנסיסקו', 'סאן פרנסיסקו'] }
+      { ko: '샌프란시스코', he: 'סן פרנסיסקו', answers: ['סן פרנסיסקו', 'סן־פרנסיסקו', 'סאן פרנסיסקו'] }
     ];
 
     const jobBank = [
       { ko: '교사', he: 'מורה', answers: ['מורה', 'מורים', 'מורות', 'איש חינוך', 'אשת חינוך'] },
-      { ko: '선생님', he: 'מורה', answers: ['מורה', 'מורים', 'מורות', 'המורה', 'מורה מכובד', 'מורה מכובדת'] },
+      { ko: '선생님', he: 'מורה', answers: ['מורה', 'המורה', 'מורים', 'מורות', 'מורה מכובד', 'מורה מכובדת'] },
       { ko: '요리사', he: 'טבח / שף', answers: ['טבח', 'טבחית', 'טבחים', 'טבחיות', 'שף', 'שפית', 'שפים', 'שפיות'] },
       { ko: '의사', he: 'רופא/ה', answers: ['רופא', 'רופאה', 'רופאים', 'רופאות', 'דוקטור', 'דוקטורית'] },
       { ko: '학생', he: 'תלמיד/ה או סטודנט/ית', answers: ['תלמיד', 'תלמידה', 'תלמידים', 'תלמידות', 'סטודנט', 'סטודנטית', 'סטודנטים', 'סטודנטיות'] },
-      { ko: '회사원', he: 'עובד/ת חברה', answers: ['עובד חברה', 'עובדת חברה', 'עובדי חברה', 'עובדות חברה', 'עובד בחברה', 'עובדת בחברה', 'שכיר', 'שכירה', 'שכירים', 'שכירות'] }
+      { ko: '회사원', he: 'עובד/ת חברה', answers: ['עובד חברה', 'עובדת חברה', 'עובדי חברה', 'עובדות חברה', 'עובד בחברה', 'עובדת בחברה', 'שכיר', 'שכירה'] }
     ];
 
     const expressionBank = [
-      { ko: '반갑습니다', he: 'נעים להכיר', answers: ['נעים להכיר', 'נעים מאוד', 'שמח להכיר', 'שמחה להכיר', 'נעים לפגוש אותך'] },
-      { ko: '안녕하세요?', he: 'שלום', answers: ['שלום', 'שלום לך', 'שלום לכם', 'שלום לכן', 'היי'] },
+      { ko: '반갑습니다', he: 'נעים להכיר', answers: ['נעים להכיר', 'נעים מאוד', 'נעים לפגוש אותך', 'שמח להכיר', 'שמחה להכיר'] },
+      { ko: '안녕하세요?', he: 'שלום', answers: ['שלום', 'שלום לך', 'שלום לכם', 'היי'] },
       { ko: '이름이 뭐예요?', he: 'מה שמך?', answers: ['מה שמך', 'מה השם שלך', 'איך קוראים לך'] },
-      { ko: '이분이 누구예요?', he: 'מי האדם הזה?', answers: ['מי האדם הזה', 'מי האיש הזה', 'מי האישה הזאת', 'מי זה', 'מי זאת'] },
+      { ko: '이분이 누구예요?', he: 'מי האדם הזה?', answers: ['מי האדם הזה', 'מי האיש הזה', 'מי האישה הזאת', 'מי זאת', 'מי זה'] },
       { ko: '한국 사람이에요?', he: 'האם את/ה מקוריאה?', answers: ['האם אתה מקוריאה', 'האם את מקוריאה', 'אתה מקוריאה', 'את מקוריאה', 'האם אתה קוריאני', 'האם את קוריאנית', 'קוריאני', 'קוריאנית'] },
-      { ko: '네, 한국 사람이에요.', he: 'כן, אני מקוריאה.', answers: ['כן אני מקוריאה', 'כן אני קוריאני', 'כן אני קוריאנית', 'אני מקוריאה', 'אני קוריאני', 'אני קוריאנית'] },
-      { ko: '회사원이에요?', he: 'האם את/ה עובד/ת חברה?', answers: ['האם אתה עובד חברה', 'האם את עובדת חברה', 'אתה עובד חברה', 'את עובדת חברה', 'עובד חברה', 'עובדת חברה', 'האם אתה שכיר', 'האם את שכירה'] },
-      { ko: '아니요, 학생이에요.', he: 'לא, אני תלמיד/ה או סטודנט/ית.', answers: ['לא אני תלמיד', 'לא אני תלמידה', 'לא אני סטודנט', 'לא אני סטודנטית', 'אני תלמיד', 'אני תלמידה', 'אני סטודנט', 'אני סטודנטית'] },
-      { ko: '아, 그래요?', he: 'אה, באמת?', answers: ['אה באמת', 'באמת', 'אה ככה'] },
+      { ko: '네, 한국 사람이에요.', he: 'כן, אני מקוריאה.', answers: ['כן אני מקוריאה', 'כן, אני מקוריאה', 'אני מקוריאה', 'כן אני קוריאני', 'כן אני קוריאנית'] },
+      { ko: '회사원이에요?', he: 'האם את/ה עובד/ת חברה?', answers: ['האם אתה עובד חברה', 'האם את עובדת חברה', 'אתה עובד חברה', 'את עובדת חברה', 'עובד חברה', 'עובדת חברה'] },
+      { ko: '아니요, 학생이에요.', he: 'לא, אני תלמיד/ה או סטודנט/ית.', answers: ['לא אני תלמיד', 'לא אני תלמידה', 'לא אני סטודנט', 'לא אני סטודנטית'] },
+      { ko: '아, 그래요?', he: 'אה, באמת?', answers: ['אה באמת', 'באמת'] },
       { ko: '저는 미국 사람이에요.', he: 'אני מארה״ב.', answers: ['אני מארהב', 'אני מארצות הברית', 'אני אמריקאי', 'אני אמריקאית'] }
     ];
 
     const extraVocabulary = [
-      { ko: '새', he: 'ציפור', answers: ['ציפור', 'ציפורים', 'עוף', 'עופות'] },
-      { ko: '개', he: 'כלב', answers: ['כלב', 'כלבה', 'כלבים', 'כלבות'] },
-      { ko: '배', he: 'סירה / אונייה / בטן / אגס', answers: ['סירה', 'סירות', 'אונייה', 'אוניה', 'אוניות', 'ספינה', 'ספינות', 'בטן', 'אגס', 'אגסים'] },
-      { ko: '배구', he: 'כדורעף', answers: ['כדורעף', 'כדור עף'] },
-      { ko: '노래', he: 'שיר', answers: ['שיר', 'שירים'] },
-      { ko: '노래하다', he: 'לשיר', answers: ['לשיר', 'שר', 'שרה', 'שרים', 'שרות'] },
-      { ko: '네', he: 'כן', answers: ['כן'] },
-      { ko: '사투리', he: 'ניב / דיאלקט', answers: ['ניב', 'ניבים', 'דיאלקט', 'דיאלקטים', 'מבטא מקומי', 'מבטאים מקומיים', 'מבטא'] },
-      { ko: '제', he: 'שלי', answers: ['שלי'] },
-      { ko: '외모', he: 'מראה חיצוני', answers: ['מראה חיצוני', 'הופעה חיצונית', 'חזות', 'מראה', 'החזות'] },
-      { ko: '돼지', he: 'חזיר', answers: ['חזיר', 'חזירה', 'חזירים', 'חזירות'] },
-      { ko: '회사', he: 'חברה / משרד', answers: ['חברה', 'חברות', 'משרד', 'משרדים', 'מקום עבודה', 'מקומות עבודה'] },
-      { ko: '소고기', he: 'בשר בקר', answers: ['בשר בקר', 'בקר'] },
-      { ko: '소', he: 'פרה / שור', answers: ['פרה', 'פרות', 'שור', 'שוורים', 'בקר'] },
-      { ko: '일', he: 'יום / עבודה / אחד', answers: ['יום', 'ימים', 'עבודה', 'עבודות', 'אחד'] },
-      { ko: '주', he: 'שבוע', answers: ['שבוע', 'שבועות'] },
-      { ko: '초', he: 'שנייה', answers: ['שנייה', 'שניה', 'שניות'] },
-      { ko: '피', he: 'דם', answers: ['דם'] },
-      { ko: '오후', he: 'אחר הצהריים', answers: ['אחר הצהריים', 'אחרי הצהריים', 'אחר צהריים', 'אחהצ'] },
-      { ko: '허리', he: 'מותניים / גב תחתון', answers: ['מותניים', 'מותן', 'גב תחתון'] },
-      { ko: '휴지', he: 'נייר טואלט / טישו', answers: ['נייר טואלט', 'טישו', 'נייר', 'ממחטה', 'ממחטות'] },
-      { ko: '커피', he: 'קפה', answers: ['קפה'] },
-      { ko: '코코아', he: 'קקאו', answers: ['קקאו'] },
-      { ko: '토마토', he: 'עגבנייה', answers: ['עגבנייה', 'עגבניה', 'עגבניות'] },
-      { ko: '케이크', he: 'עוגה', answers: ['עוגה', 'עוגות', 'קייק'] },
-      { ko: '스키', he: 'סקי', answers: ['סקי'] },
-      { ko: '스케이트', he: 'סקייט / החלקה', answers: ['סקייט', 'סקייטים', 'החלקה', 'גלגיליות'] },
-      { ko: '테니스', he: 'טניס', answers: ['טניס'] },
-      { ko: '카메라', he: 'מצלמה', answers: ['מצלמה', 'מצלמות'] },
-      { ko: '콩', he: 'שעועית / קטנייה', answers: ['שעועית', 'שעועיות', 'קטנייה', 'קטניה', 'קטניות', 'פול', 'אפונה'] },
-      { ko: '풀', he: 'דשא / עשב / דבק', answers: ['דשא', 'עשב', 'עשבים', 'דבק'] },
-      { ko: '칠판', he: 'לוח', answers: ['לוח', 'לוח כיתה', 'לוחות'] },
-      { ko: '창문', he: 'חלון', answers: ['חלון', 'חלונות'] },
-      { ko: '자동차', he: 'רכב / מכונית', answers: ['רכב', 'רכבים', 'מכונית', 'מכוניות', 'אוטו', 'מכונית פרטית'] },
-      { ko: '지하철', he: 'רכבת תחתית / מטרו', answers: ['רכבת תחתית', 'מטרו'] },
-      { ko: '비행기', he: 'מטוס', answers: ['מטוס', 'מטוסים', 'אווירון', 'אוירון'] },
-      { ko: '택시', he: 'מונית', answers: ['מונית', 'מוניות', 'טקסי'] },
-      { ko: '텔레비전', he: 'טלוויזיה', answers: ['טלוויזיה', 'טלויזיה'] },
-      { ko: '컴퓨터', he: 'מחשב', answers: ['מחשב', 'מחשבים'] },
-      { ko: '인터넷', he: 'אינטרנט', answers: ['אינטרנט'] },
-      { ko: '원', he: 'וון', answers: ['וון', 'מטבע קוריאני', 'כסף קוריאני'] },
-      { ko: '꼬리', he: 'זנב', answers: ['זנב', 'זנבות'] },
-      { ko: '까치', he: 'עקעק / עורבני', answers: ['עקעק', 'עורבני', 'ציפור עקעק'] },
-      { ko: '꼬마', he: 'ילד קטן / ילדה קטנה', answers: ['ילד קטן', 'ילדה קטנה', 'ילדים קטנים', 'ילדות קטנות', 'קטנטן', 'קטנטנה'] },
-      { ko: '토끼', he: 'ארנב', answers: ['ארנב', 'ארנבת', 'ארנבים', 'ארנבות'] },
-      { ko: '어깨', he: 'כתף', answers: ['כתף', 'כתפיים'] },
-      { ko: '따뜻해요', he: 'חמים / נעים', answers: ['חמים', 'חמימה', 'חמים ונעים', 'חם ונעים', 'נעים', 'נעימה'] },
-      { ko: '뽀뽀', he: 'נשיקה', answers: ['נשיקה', 'נשיקות'] },
-      { ko: '바빠요', he: 'עסוק/ה', answers: ['עסוק', 'עסוקה', 'עסוקים', 'עסוקות'] },
-      { ko: '써요', he: 'כותב/ת / משתמש/ת / חובש/ת', answers: ['כותב', 'כותבת', 'כותבים', 'כותבות', 'משתמש', 'משתמשת', 'משתמשים', 'משתמשות', 'חובש', 'חובשת', 'חובשים', 'חובשות'] },
-      { ko: '비싸요', he: 'יקר/ה', answers: ['יקר', 'יקרה', 'יקרים', 'יקרות'] },
-      { ko: '싫다', he: 'לא לאהוב / לשנוא', answers: ['לא לאהוב', 'לא אוהב', 'לא אוהבת', 'לא אוהבים', 'לא אוהבות', 'לשנוא', 'שונא', 'שונאת', 'שונאים', 'שונאות'] },
-      { ko: '싫어요', he: 'לא אוהב/ת', answers: ['לא אוהב', 'לא אוהבת', 'לא אוהבים', 'לא אוהבות', 'שונא', 'שונאת', 'שונאים', 'שונאות'] },
-      { ko: '편지', he: 'מכתב', answers: ['מכתב', 'מכתבים'] },
-      { ko: '비싸다', he: 'להיות יקר', answers: ['להיות יקר', 'להיות יקרה', 'יקר', 'יקרה', 'יקרים', 'יקרות'] },
-      { ko: '짜요', he: 'מלוח/ה', answers: ['מלוח', 'מלוחה', 'מלוחים', 'מלוחות'] },
-      { ko: '얘기', he: 'סיפור / שיחה', answers: ['סיפור', 'סיפורים', 'שיחה', 'שיחות'] },
-      { ko: '봐요', he: 'רואה / מסתכל/ת', answers: ['רואה', 'רואים', 'רואות', 'מסתכל', 'מסתכלת', 'מסתכלים', 'מסתכלות', 'צופה', 'צופים', 'צופות'] },
-      { ko: '여우', he: 'שועל', answers: ['שועל', 'שועלה', 'שועלים', 'שועלות'] },
-      { ko: '뒤', he: 'מאחור / אחורה', answers: ['מאחור', 'אחורה', 'מאחורי'] },
-      { ko: '귀', he: 'אוזן', answers: ['אוזן', 'אוזניים'] },
-      { ko: '가위', he: 'מספריים', answers: ['מספריים'] },
-      { ko: '고무줄', he: 'גומייה', answers: ['גומייה', 'גומיה', 'גומיות'] },
-      { ko: '추워요', he: 'קר', answers: ['קר', 'קרה', 'קרים', 'קרות', 'קריר', 'קרירה'] },
-      { ko: '쉬워요', he: 'קל/ה', answers: ['קל', 'קלה', 'קלים', 'קלות'] },
-      { ko: '예뻐요', he: 'יפה', answers: ['יפה', 'יפים', 'יפות'] },
-      { ko: '딱 여기요', he: 'בדיוק כאן', answers: ['בדיוק כאן', 'בדיוק פה', 'פה בדיוק'] },
-      { ko: '더워요', he: 'חם', answers: ['חם', 'חמה', 'חמים', 'חמות'] },
-      { ko: '자연', he: 'טבע', answers: ['טבע'] },
-      { ko: '땅', he: 'אדמה', answers: ['אדמה', 'אדמות', 'קרקע', 'ארץ'] },
-      { ko: '땀', he: 'זיעה', answers: ['זיעה'] },
-      { ko: '떡', he: 'עוגת אורז', answers: ['עוגת אורז', 'עוגות אורז', 'טוק'] },
-      { ko: '빵', he: 'לחם', answers: ['לחם', 'לחמים'] },
-      { ko: '쌀', he: 'אורז', answers: ['אורז'] },
-      { ko: '쑥', he: 'לענה קוריאנית / עשב מרפא', answers: ['לענה קוריאנית', 'עשב מרפא', 'עשב מרפא קוריאני', 'סוק'] },
-      { ko: '찜', he: 'אידוי / מאכל מאודה', answers: ['אידוי', 'מאכל מאודה', 'מנה מאודה', 'תבשיל מאודה', 'מאודה'] },
-      { ko: '뚜껑', he: 'מכסה', answers: ['מכסה', 'מכסים'] },
-      { ko: '씨름', he: 'היאבקות קוריאנית', answers: ['היאבקות קוריאנית', 'האבקות קוריאנית'] },
-      { ko: '따르릉', he: 'צליל טלפון', answers: ['צליל טלפון', 'צלצול טלפון', 'צלצול', 'רינג רינג'] },
-      { ko: '까만색', he: 'שחור / צבע שחור', answers: ['שחור', 'צבע שחור'] },
-      { ko: '뚱뚱해요', he: 'שמן/ה', answers: ['שמן', 'שמנה', 'שמנים', 'שמנות', 'מלא', 'מלאה', 'מלאים', 'מלאות'] },
-      { ko: '부엌', he: 'מטבח', answers: ['מטבח', 'מטבחים'] },
-      { ko: '꽃', he: 'פרח', answers: ['פרח', 'פרחים'] },
-      { ko: '앞', he: 'לפני / מלפנים / מול', answers: ['לפני', 'מלפנים', 'מול', 'קדימה', 'חזית', 'החזית'] },
-      { ko: '겉', he: 'חיצוני', answers: ['חיצוני', 'חיצונית', 'חוץ', 'החוץ', 'הצד החיצוני', 'החלק החיצוני', 'מעטפת', 'מבחוץ'] },
-      { ko: '낮', he: 'יום / שעות היום / צהריים', answers: ['יום', 'שעות היום', 'צהריים', 'צהרים', 'אור יום'] },
-      { ko: '예의', he: 'נימוסין', answers: ['נימוס', 'נימוסים', 'נימוסין', 'דרך ארץ'] }
+      { ko: '새', he: 'ציפור', answers: ['ציפור', 'ציפורים', 'עוף', 'עופות'], grammar: true },
+      { ko: '개', he: 'כלב', answers: ['כלב', 'כלבה', 'כלבים', 'כלבות'], grammar: true },
+      { ko: '배', he: 'אונייה / סירה / בטן / אגס', answers: ['אונייה', 'אוניה', 'סירה', 'ספינה', 'בטן', 'אגס'], grammar: true },
+      { ko: '배구', he: 'כדורעף', answers: ['כדורעף', 'כדור עף'], grammar: true },
+      { ko: '노래', he: 'שיר', answers: ['שיר', 'שירים'], grammar: true },
+      { ko: '노래하다', he: 'לשיר', answers: ['לשיר', 'שר', 'שרה', 'שרים', 'שרות'], grammar: false },
+      { ko: '네', he: 'כן', answers: ['כן'], grammar: false },
+      { ko: '사투리', he: 'ניב / דיאלקט', answers: ['ניב', 'ניבים', 'דיאלקט', 'דיאלקטים', 'מבטא מקומי', 'מבטאים מקומיים'], grammar: true },
+      { ko: '제', he: 'שלי', answers: ['שלי'], grammar: false },
+      { ko: '외모', he: 'מראה חיצוני', answers: ['מראה חיצוני', 'חזות', 'מראה', 'הופעה חיצונית'], grammar: true },
+      { ko: '돼지', he: 'חזיר', answers: ['חזיר', 'חזירה', 'חזירים', 'חזירות'], grammar: true },
+      { ko: '회사', he: 'חברה / משרד', answers: ['חברה', 'חברות', 'משרד', 'משרדים', 'מקום עבודה', 'מקומות עבודה'], grammar: true },
+      { ko: '소고기', he: 'בשר בקר', answers: ['בשר בקר', 'בקר'], grammar: true },
+      { ko: '소', he: 'פרה / שור / בקר', answers: ['פרה', 'פרות', 'שור', 'שוורים', 'בקר'], grammar: true },
+      { ko: '일', he: 'יום / עבודה / אחד', answers: ['יום', 'ימים', 'עבודה', 'עבודות', 'אחד'], grammar: true },
+      { ko: '주', he: 'שבוע', answers: ['שבוע', 'שבועות'], grammar: true },
+      { ko: '초', he: 'שנייה', answers: ['שנייה', 'שניה', 'שניות'], grammar: true },
+      { ko: '피', he: 'דם', answers: ['דם'], grammar: true },
+      { ko: '오후', he: 'אחר הצהריים', answers: ['אחר הצהריים', 'אחרי הצהריים', 'אחהצ', 'אחה״צ', 'אחה"צ'], grammar: true },
+      { ko: '허리', he: 'מותניים / גב תחתון', answers: ['מותניים', 'גב תחתון'], grammar: true },
+      { ko: '휴지', he: 'נייר טואלט / טישו', answers: ['נייר טואלט', 'טישו', 'נייר', 'ממחטה'], grammar: true },
+      { ko: '커피', he: 'קפה', answers: ['קפה'], grammar: true },
+      { ko: '코코아', he: 'קקאו', answers: ['קקאו'], grammar: true },
+      { ko: '토마토', he: 'עגבנייה', answers: ['עגבנייה', 'עגבניה', 'עגבניות'], grammar: true },
+      { ko: '케이크', he: 'עוגה', answers: ['עוגה', 'עוגות', 'קייק'], grammar: true },
+      { ko: '스키', he: 'סקי', answers: ['סקי'], grammar: true },
+      { ko: '스케이트', he: 'סקייט / החלקה', answers: ['סקייט', 'סקייטים', 'החלקה', 'גלגיליות'], grammar: true },
+      { ko: '테니스', he: 'טניס', answers: ['טניס'], grammar: true },
+      { ko: '카메라', he: 'מצלמה', answers: ['מצלמה', 'מצלמות'], grammar: true },
+      { ko: '콩', he: 'שעועית / קטנייה', answers: ['שעועית', 'שעועיות', 'קטנייה', 'קטניה', 'קטניות'], grammar: true },
+      { ko: '풀', he: 'דשא / עשב / דבק', answers: ['דשא', 'עשב', 'עשבים', 'דבק'], grammar: true },
+      { ko: '칠판', he: 'לוח', answers: ['לוח', 'לוח כיתה', 'לוחות'], grammar: true },
+      { ko: '창문', he: 'חלון', answers: ['חלון', 'חלונות'], grammar: true },
+      { ko: '자동차', he: 'רכב / מכונית', answers: ['רכב', 'רכבים', 'מכונית', 'מכוניות', 'אוטו', 'מכונית פרטית'], grammar: true },
+      { ko: '지하철', he: 'רכבת תחתית / מטרו', answers: ['רכבת תחתית', 'מטרו'], grammar: true },
+      { ko: '비행기', he: 'מטוס', answers: ['מטוס', 'מטוסים', 'אווירון', 'אוירון'], grammar: true },
+      { ko: '택시', he: 'מונית', answers: ['מונית', 'מוניות', 'טקסי'], grammar: true },
+      { ko: '텔레비전', he: 'טלוויזיה', answers: ['טלוויזיה', 'טלויזיה'], grammar: true },
+      { ko: '컴퓨터', he: 'מחשב', answers: ['מחשב', 'מחשבים'], grammar: true },
+      { ko: '인터넷', he: 'אינטרנט', answers: ['אינטרנט'], grammar: true },
+      { ko: '원', he: 'וון / מטבע קוריאני', answers: ['וון', 'מטבע קוריאני', 'כסף קוריאני'], grammar: true },
+      { ko: '꼬리', he: 'זנב', answers: ['זנב', 'זנבות'], grammar: true },
+      { ko: '까치', he: 'עקעק / עורבני', answers: ['עקעק', 'עורבני', 'ציפור עקעק'], grammar: true },
+      { ko: '꼬마', he: 'ילד קטן / ילדה קטנה', answers: ['ילד קטן', 'ילדה קטנה', 'ילדים קטנים', 'ילדות קטנות', 'קטנטן', 'קטנטנה'], grammar: true },
+      { ko: '토끼', he: 'ארנב', answers: ['ארנב', 'ארנבת', 'ארנבים', 'ארנבות'], grammar: true },
+      { ko: '어깨', he: 'כתף', answers: ['כתף', 'כתפיים'], grammar: true },
+      { ko: '따뜻해요', he: 'חמים / נעים', answers: ['חמים', 'חמימה', 'חם ונעים', 'נעים', 'נעימה'], grammar: false },
+      { ko: '뽀뽀', he: 'נשיקה', answers: ['נשיקה', 'נשיקות'], grammar: true },
+      { ko: '바빠요', he: 'עסוק/ה', answers: ['עסוק', 'עסוקה', 'עסוקים', 'עסוקות'], grammar: false },
+      { ko: '써요', he: 'כותב / משתמש / חובש', answers: ['כותב', 'כותבת', 'כותבים', 'כותבות', 'משתמש', 'משתמשת', 'משתמשים', 'משתמשות', 'חובש', 'חובשת'], grammar: false },
+      { ko: '비싸요', he: 'יקר/ה', answers: ['יקר', 'יקרה', 'יקרים', 'יקרות'], grammar: false },
+      { ko: '싫다', he: 'לא לאהוב / לשנוא', answers: ['לא לאהוב', 'לא אוהב', 'לא אוהבת', 'לשנוא', 'שונא', 'שונאת'], grammar: false },
+      { ko: '싫어요', he: 'לא אוהב/ת', answers: ['לא אוהב', 'לא אוהבת', 'לא אוהבים', 'לא אוהבות', 'שונא', 'שונאת'], grammar: false },
+      { ko: '편지', he: 'מכתב', answers: ['מכתב', 'מכתבים'], grammar: true },
+      { ko: '비싸다', he: 'להיות יקר', answers: ['להיות יקר', 'להיות יקרה', 'יקר', 'יקרה'], grammar: false },
+      { ko: '짜요', he: 'מלוח/ה', answers: ['מלוח', 'מלוחה', 'מלוחים', 'מלוחות'], grammar: false },
+      { ko: '얘기', he: 'סיפור / שיחה', answers: ['סיפור', 'סיפורים', 'שיחה', 'שיחות'], grammar: true },
+      { ko: '사고', he: 'תאונה', answers: ['תאונה', 'תאונות'], grammar: true },
+      { ko: '봐요', he: 'רואה / מסתכל', answers: ['רואה', 'רואים', 'רואות', 'מסתכל', 'מסתכלת', 'מסתכלים', 'מסתכלות', 'צופה', 'צופים', 'צופות'], grammar: false },
+      { ko: '여우', he: 'שועל', answers: ['שועל', 'שועלה', 'שועלים', 'שועלות'], grammar: true },
+      { ko: '뒤', he: 'מאחור / אחורה', answers: ['מאחור', 'אחורה', 'מאחורי'], grammar: true },
+      { ko: '귀', he: 'אוזן', answers: ['אוזן', 'אוזניים'], grammar: true },
+      { ko: '가위', he: 'מספריים', answers: ['מספריים'], grammar: true },
+      { ko: '고무줄', he: 'גומייה', answers: ['גומייה', 'גומיה', 'גומיות'], grammar: true },
+      { ko: '추워요', he: 'קר', answers: ['קר', 'קרה', 'קריר', 'קרירה'], grammar: false },
+      { ko: '쉬워요', he: 'קל/ה', answers: ['קל', 'קלה', 'קלים', 'קלות'], grammar: false },
+      { ko: '예뻐요', he: 'יפה', answers: ['יפה', 'יפים', 'יפות'], grammar: false },
+      { ko: '딱 여기요', he: 'בדיוק כאן', answers: ['בדיוק כאן', 'פה בדיוק', 'בדיוק פה'], grammar: false },
+      { ko: '더워요', he: 'חם', answers: ['חם', 'חמה', 'חמים', 'חמות'], grammar: false },
+      { ko: '자연', he: 'טבע', answers: ['טבע'], grammar: true },
+      { ko: '땅', he: 'אדמה', answers: ['אדמה', 'קרקע', 'ארץ'], grammar: true },
+      { ko: '땀', he: 'זיעה', answers: ['זיעה'], grammar: true },
+      { ko: '떡', he: 'עוגת אורז', answers: ['עוגת אורז', 'עוגות אורז', 'טוק'], grammar: true },
+      { ko: '빵', he: 'לחם', answers: ['לחם', 'לחמים'], grammar: true },
+      { ko: '쌀', he: 'אורז', answers: ['אורז'], grammar: true },
+      { ko: '쑥', he: 'לענה קוריאנית / עשב מרפא', answers: ['לענה קוריאנית', 'עשב מרפא קוריאני', 'סוק'], grammar: true },
+      { ko: '찜', he: 'אידוי / מאכל מאודה', answers: ['אידוי', 'מאכל מאודה', 'תבשיל מאודה'], grammar: true },
+      { ko: '뚜껑', he: 'מכסה', answers: ['מכסה', 'מכסים'], grammar: true },
+      { ko: '씨름', he: 'היאבקות קוריאנית', answers: ['היאבקות קוריאנית', 'האבקות קוריאנית'], grammar: true },
+      { ko: '따르릉', he: 'צליל טלפון', answers: ['צליל טלפון', 'צלצול טלפון', 'רינג רינג'], grammar: false },
+      { ko: '까만색', he: 'צבע שחור', answers: ['צבע שחור', 'שחור'], grammar: true },
+      { ko: '뚱뚱해요', he: 'שמן/ה', answers: ['שמן', 'שמנה', 'שמנים', 'שמנות', 'מלא', 'מלאה', 'מלאים', 'מלאות'], grammar: false },
+      { ko: '부엌', he: 'מטבח', answers: ['מטבח', 'מטבחים'], grammar: true },
+      { ko: '꽃', he: 'פרח', answers: ['פרח', 'פרחים'], grammar: true },
+      { ko: '앞', he: 'לפני / מלפנים / מול', answers: ['לפני', 'מלפנים', 'מול', 'קדימה'], grammar: true },
+      { ko: '겉', he: 'חיצוני / הצד החיצוני', answers: ['חיצוני', 'חיצונית', 'חוץ', 'הצד החיצוני', 'מעטפת חיצונית', 'המעטפת החיצונית'], grammar: true },
+      { ko: '낮', he: 'יום / שעות היום', answers: ['יום', 'שעות היום', 'צהריים', 'אור יום'], grammar: true },
+      { ko: '예의', he: 'נימוסין', answers: ['נימוסין', 'נימוסים', 'נימוס', 'דרך ארץ'], grammar: true }
     ];
 
     const nameBank = [
       { ko: '앤디', he: 'אנדי' },
-      { ko: '수잔', he: 'סוזן' },
+      { ko: '수진', he: 'סוג׳ין' },
       { ko: '소라', he: 'סורה' },
       { ko: '미나', he: 'מינה' },
       { ko: '미에코', he: 'מיאקו' },
@@ -986,55 +987,42 @@
       { ko: '이타이', he: 'איתי' }
     ];
 
-    const textbookCountryPresets = [
+    const p25Presets = [
       { label: '앤디 / 미국', nameKo: '앤디', nameHe: 'אנדי', countryKo: '미국', countryHe: 'ארה״ב' },
       { label: '미나 / 한국', nameKo: '미나', nameHe: 'מינה', countryKo: '한국', countryHe: 'קוריאה' },
       { label: '미에코 / 일본', nameKo: '미에코', nameHe: 'מיאקו', countryKo: '일본', countryHe: 'יפן' },
       { label: '투안 / 베트남', nameKo: '투안', nameHe: 'טואן', countryKo: '베트남', countryHe: 'וייטנאם' },
       { label: '완 / 태국', nameKo: '완', nameHe: 'ואן', countryKo: '태국', countryHe: 'תאילנד' },
+      { label: '나탈리 / 이스라엘', nameKo: '나탈리', nameHe: 'נטלי', countryKo: '이스라엘', countryHe: 'ישראל' },
+      { label: '이타이 / 이스라엘', nameKo: '이타이', nameHe: 'איתי', countryKo: '이스라엘', countryHe: 'ישראל' }
+    ];
+
+    const dialog1Presets = [
       { label: '소라 / 한국', nameKo: '소라', nameHe: 'סורה', countryKo: '한국', countryHe: 'קוריאה' },
       { label: '한스 / 독일', nameKo: '한스', nameHe: 'הנס', countryKo: '독일', countryHe: 'גרמניה' },
       { label: '이리나 / 러시아', nameKo: '이리나', nameHe: 'אירינה', countryKo: '러시아', countryHe: 'רוסיה' },
       { label: '렌핑 / 중국', nameKo: '렌핑', nameHe: 'רנפינג', countryKo: '중국', countryHe: 'סין' },
-      { label: '딩딩 / 중국', nameKo: '딩딩', nameHe: 'דינגדינג', countryKo: '중국', countryHe: 'סין' }
+      { label: '라헬 / 이스라엘', nameKo: '라헬', nameHe: 'רחל', countryKo: '이스라엘', countryHe: 'ישראל' },
+      { label: '누르 / 이스라엘', nameKo: '누르', nameHe: 'נור', countryKo: '이스라엘', countryHe: 'ישראל' }
     ];
-
-    const courseNamePresets = nameBank
-      .filter(item => !textbookCountryPresets.some(preset => preset.nameKo === item.ko))
-      .map(item => ({ label: `${item.ko} / ${item.he}`, nameKo: item.ko, nameHe: item.he }));
-
-    const p25Presets = [...textbookCountryPresets.slice(0, 5), ...courseNamePresets];
-    const dialog1Presets = [...textbookCountryPresets.slice(5), ...courseNamePresets];
 
     const dialog2Presets = [
       { label: '미나 / 학생', personKo: '미나', personHe: 'מינה', jobKo: '학생', jobHe: 'תלמידה / סטודנטית' },
       { label: '미에코 / 선생님', personKo: '미에코', personHe: 'מיאקו', jobKo: '선생님', jobHe: 'מורה' },
       { label: '투안 / 요리사', personKo: '투안', personHe: 'טואן', jobKo: '요리사', jobHe: 'טבח / שף' },
       { label: '폴 / 의사', personKo: '폴', personHe: 'פול', jobKo: '의사', jobHe: 'רופא' },
-      ...courseNamePresets.map(item => ({ label: item.label, personKo: item.nameKo, personHe: item.nameHe }))
+      { label: '일라닛 / 선생님', personKo: '일라닛', personHe: 'אילנית', jobKo: '선생님', jobHe: 'מורה' },
+      { label: '미키 / 학생', personKo: '미키', personHe: 'מיקי', jobKo: '학생', jobHe: 'תלמיד / סטודנט' }
     ];
 
-    const suffixExtraItems = [
-      '새', '개', '배', '배구', '노래', '외모', '돼지', '회사', '소고기', '소', '일', '주', '초', '피', '오후',
-      '허리', '휴지', '커피', '코코아', '토마토', '케이크', '스키', '스케이트', '테니스', '카메라', '콩', '풀',
-      '칠판', '창문', '자동차', '지하철', '비행기', '택시', '텔레비전', '컴퓨터', '인터넷', '원', '꼬리', '까치',
-      '꼬마', '토끼', '어깨', '뽀뽀', '편지', '얘기', '여우', '뒤', '귀', '가위', '고무줄', '자연', '땅', '땀',
-      '떡', '빵', '쌀', '쑥', '찜', '뚜껑', '씨름', '따르릉', '까만색', '부엌', '꽃', '앞', '겉', '낮', '예의'
-    ].map(ko => {
-      const item = findByKo([...countryBank, ...jobBank, ...extraVocabulary], ko);
-      return item ? { ko: item.ko, he: item.he } : null;
-    }).filter(Boolean);
-
     const vocabItems = buildVocabItems([...countryBank, ...jobBank, ...expressionBank, ...extraVocabulary]);
-    const grammarItems = buildSimpleItems([...nameBank, ...countryBank, ...jobBank, ...suffixExtraItems])
-      .map((item, index) => ({ ...item, ko: baseWord(item.ko), id: `grammar-${index}`, misses: 0 }));
+    const grammarItems = buildGrammarItems();
 
     let koVoice = null;
     let vocabQueue = [];
     let currentVocab = null;
     let vocabDone = 0;
     let vocabMisses = 0;
-    let vocabNextMode = 'next';
     let vocabAutoTimer = null;
 
     let grammarQueue = [];
@@ -1049,67 +1037,45 @@
       return document.getElementById(id);
     }
 
-    function uniqueValues(values) {
-      return [...new Set(values.filter(value => String(value || '').trim()).map(value => String(value).trim()))];
-    }
-
-    function normalizeHebrew(value) {
-      return String(value || '')
-        .normalize('NFKC')
-        .replace(/[\u200e\u200f]/g, '')
-        .replace(/[\u0591-\u05C7]/g, '')
-        .replace(/[״"׳']/g, '')
-        .replace(/[.,!?;:()[\]{}־\-–—/\\]/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim()
-        .toLowerCase();
-    }
-
-    function normalizeKo(value) {
-      return baseWord(value).replace(/\s+/g, '').trim();
-    }
-
-    function baseWord(value) {
-      return String(value || '')
-        .trim()
-        .replace(/[.。!?？]+$/g, '')
-        .replace(/\s+/g, '')
-        .replace(/(이에요|예요|입니다|이에요|예요)$/g, '')
-        .trim();
-    }
-
     function buildVocabItems(items) {
       const map = new Map();
       items.forEach(item => {
         const ko = String(item.ko || '').trim();
         if (!ko) return;
-        const key = normalizeKo(ko) || ko;
-        const existing = map.get(key);
-        const answers = uniqueValues([item.he, ...(item.answers || [])]);
+        const existing = map.get(ko);
+        const answers = [...(item.answers || []), item.he].filter(Boolean);
         if (existing) {
-          existing.answers = uniqueValues([...existing.answers, ...answers]);
+          existing.answers = [...new Set([...(existing.answers || []), ...answers])];
           if (!existing.he && item.he) existing.he = item.he;
-          return;
+          existing.grammar = Boolean(existing.grammar || item.grammar);
+        } else {
+          map.set(ko, {
+            ko,
+            he: item.he || '',
+            answers: [...new Set(answers)],
+            grammar: Boolean(item.grammar)
+          });
         }
-        map.set(key, { ko, he: item.he || answers[0] || '', answers });
       });
       return [...map.values()].map((item, index) => ({ ...item, id: `vocab-${index}`, misses: 0 }));
     }
 
-    function buildSimpleItems(items) {
+    function buildGrammarItems() {
+      const raw = [
+        ...nameBank.map(item => ({ ko: item.ko, he: item.he, source: 'שם פרטי' })),
+        ...countryBank.map(item => ({ ko: item.ko, he: item.he, source: 'שם מקום' })),
+        ...jobBank.map(item => ({ ko: item.ko, he: item.he, source: 'שם עצם / מקצוע' })),
+        ...extraVocabulary.filter(item => item.grammar).map(item => ({ ko: item.ko, he: item.he, source: 'שם עצם' })),
+        { ko: '사람', he: 'אדם', source: 'שם עצם' },
+        { ko: '이분', he: 'האדם הזה / האדם המכובד הזה', source: 'שם עצם' }
+      ];
       const map = new Map();
-      items.forEach(item => {
+      raw.forEach(item => {
         const ko = baseWord(item.ko);
-        if (!ko) return;
-        const key = normalizeKo(ko);
-        if (!map.has(key)) map.set(key, { ko, he: item.he || ko });
+        if (!ko || !isSimpleNounLike(ko)) return;
+        if (!map.has(ko)) map.set(ko, { ko, he: item.he, source: item.source });
       });
-      return [...map.values()];
-    }
-
-    function findByKo(bank, ko) {
-      const clean = normalizeKo(ko);
-      return bank.find(item => normalizeKo(item.ko) === clean) || null;
+      return [...map.values()].map((item, index) => ({ ...item, id: `grammar-${index}`, misses: 0 }));
     }
 
     function refreshVoices() {
@@ -1143,7 +1109,9 @@
       utterance.rate = 0.84;
       if (koVoice) utterance.voice = koVoice;
       utterance.onend = () => {
-        if (index + 1 < lines.length) window.setTimeout(() => speakSequence(lines, index + 1), 350);
+        if (index + 1 < lines.length) {
+          window.setTimeout(() => speakSequence(lines, index + 1), 350);
+        }
       };
       window.speechSynthesis.speak(utterance);
     }
@@ -1162,27 +1130,48 @@
       queue.splice(index, 0, item);
     }
 
-    function clearVocabTimer() {
-      if (vocabAutoTimer) window.clearTimeout(vocabAutoTimer);
-      vocabAutoTimer = null;
+    function normalizeHebrew(value) {
+      return String(value || '')
+        .normalize('NFKC')
+        .replace(/[\u0591-\u05C7]/g, '')
+        .replace(/[״"׳']/g, '')
+        .replace(/[.,!?;:()[\]{}־\-–—/\\]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
     }
 
-    function clearGrammarTimer() {
-      if (grammarAutoTimer) window.clearTimeout(grammarAutoTimer);
-      grammarAutoTimer = null;
+    function normalizeKo(value) {
+      return String(value || '').replace(/\s+/g, '').trim();
+    }
+
+    function isHangulSyllable(ch) {
+      return ch >= '가' && ch <= '힣';
+    }
+
+    function isSimpleNounLike(word) {
+      const clean = String(word || '').trim();
+      return clean.length > 0 && Array.from(clean).some(isHangulSyllable) && !/[?!.。\s]/.test(clean);
+    }
+
+    function baseWord(value) {
+      let clean = String(value || '').trim();
+      clean = clean.replace(/\s+/g, '');
+      clean = clean.replace(/(이에요|예요|입니다|이에요\?|예요\?)$/g, '');
+      clean = clean.replace(/[?.。]+$/g, '');
+      return clean;
     }
 
     function hasBatchim(word) {
-      const chars = Array.from(baseWord(word)).reverse();
-      const lastHangul = chars.find(ch => ch >= '가' && ch <= '힣');
+      const chars = Array.from(String(word || '')).reverse();
+      const lastHangul = chars.find(isHangulSyllable);
       if (!lastHangul) return false;
       const code = lastHangul.charCodeAt(0) - 0xAC00;
       return code >= 0 && code <= 11171 && code % 28 !== 0;
     }
 
     function ieyo(word) {
-      const clean = baseWord(word);
-      return hasBatchim(clean) ? '이에요' : '예요';
+      return hasBatchim(word) ? '이에요' : '예요';
     }
 
     function withIeyo(word) {
@@ -1192,6 +1181,11 @@
 
     function asQuestionWithIeyo(word) {
       return withIeyo(word) + '?';
+    }
+
+    function findByKo(bank, ko) {
+      const clean = normalizeKo(ko);
+      return bank.find(item => normalizeKo(item.ko) === clean) || null;
     }
 
     function setField(id, value) {
@@ -1231,8 +1225,33 @@
     }
 
     function syncHeFromKo(inputId, heInputId, bank) {
+      if (!$(inputId) || !$(heInputId)) return;
       const match = findByKo(bank, getField(inputId));
       if (match) setField(heInputId, match.he);
+    }
+
+    function clearVocabTimer() {
+      if (vocabAutoTimer) window.clearTimeout(vocabAutoTimer);
+      vocabAutoTimer = null;
+    }
+
+    function clearGrammarTimer() {
+      if (grammarAutoTimer) window.clearTimeout(grammarAutoTimer);
+      grammarAutoTimer = null;
+    }
+
+    function scheduleVocabNext(delay = AUTO_NEXT_DELAY) {
+      clearVocabTimer();
+      $('vocab-next').hidden = false;
+      $('vocab-next').textContent = 'דלג עכשיו';
+      vocabAutoTimer = window.setTimeout(showNextVocab, delay);
+    }
+
+    function scheduleGrammarNext(delay = AUTO_NEXT_DELAY) {
+      clearGrammarTimer();
+      $('grammar-next').hidden = false;
+      $('grammar-next').textContent = 'דלג עכשיו';
+      grammarAutoTimer = window.setTimeout(showNextGrammar, delay);
     }
 
     function resetVocab() {
@@ -1249,9 +1268,8 @@
 
     function showNextVocab() {
       clearVocabTimer();
-      vocabNextMode = 'next';
-      $('vocab-next').textContent = 'המילה הבאה';
       $('vocab-next').hidden = true;
+      $('vocab-next').textContent = 'המילה הבאה';
       $('vocab-check').disabled = false;
       $('vocab-answer').disabled = false;
       $('vocab-answer').value = '';
@@ -1274,28 +1292,8 @@
       updateVocabStats();
     }
 
-    function retryCurrentVocab() {
-      clearVocabTimer();
-      if (!currentVocab) {
-        showNextVocab();
-        return;
-      }
-      vocabNextMode = 'next';
-      $('vocab-next').hidden = true;
-      $('vocab-next').textContent = 'המילה הבאה';
-      $('vocab-check').disabled = false;
-      $('vocab-answer').disabled = false;
-      $('vocab-answer').value = '';
-      $('vocab-feedback').textContent = '';
-      $('vocab-feedback').className = 'feedback';
-      $('vocab-answer').focus();
-      updateVocabStats();
-    }
-
     function advanceVocabButton() {
-      clearVocabTimer();
-      if (vocabNextMode === 'retry') retryCurrentVocab();
-      else showNextVocab();
+      showNextVocab();
     }
 
     function checkVocab() {
@@ -1309,38 +1307,26 @@
         return;
       }
 
-      const accepted = uniqueValues([item.he, ...(item.answers || [])]).map(normalizeHebrew);
+      const accepted = (item.answers && item.answers.length ? item.answers : [item.he]).map(normalizeHebrew);
       const isCorrect = accepted.includes(userAnswer);
       $('vocab-answer').disabled = true;
       $('vocab-check').disabled = true;
-      $('vocab-next').hidden = false;
 
       if (isCorrect) {
-        item.misses = 0;
         currentVocab = null;
-        vocabNextMode = 'next';
         vocabDone += 1;
-        $('vocab-next').textContent = 'עובר אוטומטית...';
         $('vocab-feedback').className = 'feedback ok';
-        $('vocab-feedback').textContent = `נכון! ${item.ko} = ${item.he}`;
-        vocabAutoTimer = window.setTimeout(showNextVocab, AUTO_NEXT_DELAY);
+        $('vocab-feedback').textContent = 'נכון! עוברים למילה הבאה...';
+        speak(item.ko);
+        scheduleVocabNext(AUTO_NEXT_DELAY);
       } else {
         item.misses += 1;
         vocabMisses += 1;
+        insertRandom(vocabQueue, item);
+        currentVocab = null;
         $('vocab-feedback').className = 'feedback no';
-        if (item.misses >= 3) {
-          const attempts = item.misses;
-          item.misses = 0;
-          insertRandom(vocabQueue, item);
-          currentVocab = null;
-          vocabNextMode = 'next';
-          $('vocab-next').textContent = 'המילה הבאה';
-          $('vocab-feedback').textContent = `לא נכון. התשובה: ${item.he}. זו טעות ${attempts}/3, לכן המילה חזרה לתור הרנדומלי ותופיע שוב בהמשך.`;
-        } else {
-          vocabNextMode = 'retry';
-          $('vocab-next').textContent = 'נסה שוב';
-          $('vocab-feedback').textContent = `לא נכון. התשובה: ${item.he}. טעות ${item.misses}/3.`;
-        }
+        $('vocab-feedback').textContent = `לא נכון. לא מגלה את התשובה — המילה תחזור בהמשך. סך טעויות במילה הזו: ${item.misses}.`;
+        scheduleVocabNext(AUTO_WRONG_DELAY);
       }
       updateVocabStats();
     }
@@ -1380,7 +1366,7 @@
       if (!grammarQueue.length) {
         currentGrammar = null;
         $('grammar-prompt').textContent = 'סיימת!';
-        $('grammar-he').textContent = 'כל המילים נענו נכון.';
+        $('grammar-he').textContent = 'כל השמות ושמות העצם נענו נכון.';
         document.querySelectorAll('.choice-btn').forEach(button => { button.disabled = true; });
         $('grammar-complete').classList.add('visible');
         updateGrammarStats();
@@ -1389,7 +1375,7 @@
 
       currentGrammar = grammarQueue.shift();
       $('grammar-prompt').textContent = currentGrammar.ko;
-      $('grammar-he').textContent = currentGrammar.he;
+      $('grammar-he').textContent = `${currentGrammar.he} · ${currentGrammar.source}`;
       updateGrammarStats();
     }
 
@@ -1400,18 +1386,15 @@
       const selected = button.dataset.suffix;
       const correct = ieyo(item.ko);
       document.querySelectorAll('.choice-btn').forEach(btn => { btn.disabled = true; });
-      $('grammar-next').hidden = false;
       currentGrammar = null;
 
       if (selected === correct) {
-        item.misses = 0;
         grammarDone += 1;
         button.classList.add('correct');
-        $('grammar-next').textContent = 'עובר אוטומטית...';
         $('grammar-feedback').className = 'feedback ok';
-        $('grammar-feedback').textContent = `נכון: ${withIeyo(item.ko)}.`;
+        $('grammar-feedback').textContent = `נכון: ${withIeyo(item.ko)}. עוברים הלאה...`;
         speak(withIeyo(item.ko));
-        grammarAutoTimer = window.setTimeout(showNextGrammar, AUTO_NEXT_DELAY);
+        scheduleGrammarNext(AUTO_NEXT_DELAY);
       } else {
         grammarMisses += 1;
         item.misses += 1;
@@ -1419,9 +1402,9 @@
         const correctButton = document.querySelector(`.choice-btn[data-suffix="${correct}"]`);
         if (correctButton) correctButton.classList.add('correct');
         insertRandom(grammarQueue, item);
-        $('grammar-next').textContent = 'למילה הבאה';
         $('grammar-feedback').className = 'feedback no';
         $('grammar-feedback').textContent = `לא נכון. התשובה היא ${withIeyo(item.ko)}. המילה תחזור בהמשך.`;
+        scheduleGrammarNext(AUTO_WRONG_DELAY);
       }
       updateGrammarStats();
     }
@@ -1445,7 +1428,7 @@
         row.className = 'chat-line';
 
         const speaker = document.createElement('span');
-        speaker.className = 'speaker-tag';
+        speaker.className = 'speaker-tag ko';
         speaker.textContent = line.speaker;
 
         const textBox = document.createElement('div');
@@ -1481,6 +1464,7 @@
 
         actions.appendChild(audioBtn);
         actions.appendChild(translateBtn);
+
         row.appendChild(speaker);
         row.appendChild(textBox);
         row.appendChild(actions);
@@ -1489,18 +1473,21 @@
     }
 
     function toggleAllTranslations(key, visible) {
-      document.querySelectorAll(`[id^="${key}-he-"]`).forEach(node => node.classList.toggle('visible', visible));
+      document.querySelectorAll(`[id^="${key}-he-"]`).forEach(node => {
+        node.classList.toggle('visible', visible);
+      });
     }
 
     function updateP25() {
-      const nameKo = baseWord(getField('p25-name-ko') || '앤디');
+      const nameKo = baseWord(getField('p25-name-ko')) || '앤디';
       const nameHe = getField('p25-name-he') || nameKo;
-      const countryKo = baseWord(getField('p25-country-ko') || '미국');
+      const countryKo = baseWord(getField('p25-country-ko')) || '미국';
       const countryHe = getField('p25-country-he') || countryKo;
-      const questionCountryKo = baseWord(getField('p25-question-country-ko') || '러시아');
+      const questionCountryKo = baseWord(getField('p25-question-country-ko')) || '러시아';
       const questionCountry = findByKo(countryBank, questionCountryKo);
       const questionCountryHe = questionCountry ? questionCountry.he : questionCountryKo;
       const sameCountry = normalizeKo(countryKo) === normalizeKo(questionCountryKo);
+
       const answerKo = sameCountry ? `네, ${countryKo} 사람이에요.` : `아니요, ${countryKo} 사람이에요.`;
       const answerHe = sameCountry ? `כן, אני מ${countryHe}.` : `לא, אני מ${countryHe}.`;
 
@@ -1513,11 +1500,11 @@
     }
 
     function updateD1() {
-      const nameKo = baseWord(getField('d1-name-ko') || '소라');
+      const nameKo = baseWord(getField('d1-name-ko')) || '소라';
       const nameHe = getField('d1-name-he') || nameKo;
-      const countryKo = baseWord(getField('d1-country-ko') || '한국');
+      const countryKo = baseWord(getField('d1-country-ko')) || '한국';
       const countryHe = getField('d1-country-he') || countryKo;
-      const andyCountryKo = baseWord(getField('d1-andy-country-ko') || '미국');
+      const andyCountryKo = baseWord(getField('d1-andy-country-ko')) || '미국';
       const andyCountryHe = getField('d1-andy-country-he') || andyCountryKo;
 
       renderDialog('d1', 'd1-lines', [
@@ -1531,13 +1518,13 @@
     }
 
     function updateD2() {
-      const introKo = baseWord(getField('d2-intro-ko') || '소라');
+      const introKo = baseWord(getField('d2-intro-ko')) || '소라';
       const introHe = getField('d2-intro-he') || introKo;
-      const personKo = baseWord(getField('d2-person-ko') || '미나');
+      const personKo = baseWord(getField('d2-person-ko')) || '미나';
       const personHe = getField('d2-person-he') || personKo;
-      const questionJobKo = baseWord(getField('d2-question-job-ko') || '회사원');
+      const questionJobKo = baseWord(getField('d2-question-job-ko')) || '회사원';
       const questionJobHe = getField('d2-question-job-he') || questionJobKo;
-      const jobKo = baseWord(getField('d2-job-ko') || '학생');
+      const jobKo = baseWord(getField('d2-job-ko')) || '학생';
       const jobHe = getField('d2-job-he') || jobKo;
       const sameJob = normalizeKo(questionJobKo) === normalizeKo(jobKo);
 
@@ -1556,8 +1543,8 @@
       if (!preset) return;
       setField('p25-name-ko', preset.nameKo);
       setField('p25-name-he', preset.nameHe);
-      if (preset.countryKo) setField('p25-country-ko', preset.countryKo);
-      if (preset.countryHe) setField('p25-country-he', preset.countryHe);
+      setField('p25-country-ko', preset.countryKo);
+      setField('p25-country-he', preset.countryHe);
       updateP25();
     }
 
@@ -1566,8 +1553,8 @@
       if (!preset) return;
       setField('d1-name-ko', preset.nameKo);
       setField('d1-name-he', preset.nameHe);
-      if (preset.countryKo) setField('d1-country-ko', preset.countryKo);
-      if (preset.countryHe) setField('d1-country-he', preset.countryHe);
+      setField('d1-country-ko', preset.countryKo);
+      setField('d1-country-he', preset.countryHe);
       updateD1();
     }
 
@@ -1576,8 +1563,8 @@
       if (!preset) return;
       setField('d2-person-ko', preset.personKo);
       setField('d2-person-he', preset.personHe);
-      if (preset.jobKo) setField('d2-job-ko', preset.jobKo);
-      if (preset.jobHe) setField('d2-job-he', preset.jobHe);
+      setField('d2-job-ko', preset.jobKo);
+      setField('d2-job-he', preset.jobHe);
       updateD2();
     }
 
@@ -1615,8 +1602,10 @@
         if (event.key === 'Enter' && !$('vocab-check').disabled) checkVocab();
       });
 
-      document.querySelectorAll('.choice-btn').forEach(button => button.addEventListener('click', () => checkGrammar(button)));
-      $('grammar-next').addEventListener('click', () => { clearGrammarTimer(); showNextGrammar(); });
+      document.querySelectorAll('.choice-btn').forEach(button => {
+        button.addEventListener('click', () => checkGrammar(button));
+      });
+      $('grammar-next').addEventListener('click', showNextGrammar);
       $('grammar-reset').addEventListener('click', resetGrammar);
 
       $('p25-update').addEventListener('click', updateP25);
@@ -1636,20 +1625,25 @@
         $('copy-status').textContent = '';
       });
 
-      document.querySelectorAll('[data-show-all]').forEach(button => button.addEventListener('click', () => toggleAllTranslations(button.dataset.showAll, true)));
-      document.querySelectorAll('[data-hide-all]').forEach(button => button.addEventListener('click', () => toggleAllTranslations(button.dataset.hideAll, false)));
-      document.querySelectorAll('[data-speak-dialog]').forEach(button => button.addEventListener('click', () => speakSequence(dialogLines[button.dataset.speakDialog] || [])));
+      document.querySelectorAll('[data-show-all]').forEach(button => {
+        button.addEventListener('click', () => toggleAllTranslations(button.dataset.showAll, true));
+      });
+      document.querySelectorAll('[data-hide-all]').forEach(button => {
+        button.addEventListener('click', () => toggleAllTranslations(button.dataset.hideAll, false));
+      });
+      document.querySelectorAll('[data-speak-dialog]').forEach(button => {
+        button.addEventListener('click', () => speakSequence(dialogLines[button.dataset.speakDialog] || []));
+      });
 
       const countrySyncs = [
-        ['p25-question-country-ko', 'p25-question-country-ko'],
+        ['p25-question-country-ko', 'p25-question-country-he'],
         ['p25-country-ko', 'p25-country-he'],
         ['d1-country-ko', 'd1-country-he'],
         ['d1-andy-country-ko', 'd1-andy-country-he']
       ];
       countrySyncs.forEach(([koId, heId]) => {
-        const source = $(koId);
-        if (!source || koId === heId) return;
-        source.addEventListener('change', () => syncHeFromKo(koId, heId, countryBank));
+        const koNode = $(koId);
+        if (koNode) koNode.addEventListener('change', () => syncHeFromKo(koId, heId, countryBank));
       });
 
       const nameSyncs = [
@@ -1658,22 +1652,26 @@
         ['d2-intro-ko', 'd2-intro-he'],
         ['d2-person-ko', 'd2-person-he']
       ];
-      nameSyncs.forEach(([koId, heId]) => $(koId).addEventListener('change', () => syncHeFromKo(koId, heId, nameBank)));
+      nameSyncs.forEach(([koId, heId]) => {
+        $(koId).addEventListener('change', () => syncHeFromKo(koId, heId, nameBank));
+      });
 
       const jobSyncs = [
         ['d2-question-job-ko', 'd2-question-job-he'],
         ['d2-job-ko', 'd2-job-he']
       ];
-      jobSyncs.forEach(([koId, heId]) => $(koId).addEventListener('change', () => syncHeFromKo(koId, heId, jobBank)));
+      jobSyncs.forEach(([koId, heId]) => {
+        $(koId).addEventListener('change', () => syncHeFromKo(koId, heId, jobBank));
+      });
     }
 
     function init() {
       fillDatalist('names-list', nameBank);
       fillDatalist('countries-list', countryBank);
       fillDatalist('jobs-list', jobBank);
-      fillSelect('p25-bank', p25Presets, 'בחר/י דמות או שם מהבנק');
-      fillSelect('d1-bank', dialog1Presets, 'בחר/י דמות או שם מהבנק');
-      fillSelect('d2-bank', dialog2Presets, 'בחר/י אדם מהבנק');
+      fillSelect('p25-bank', p25Presets, 'בחר/י דמות מעמוד 25');
+      fillSelect('d1-bank', dialog1Presets, 'בחר/י דמות מעמוד 26');
+      fillSelect('d2-bank', dialog2Presets, 'בחר/י דמות מעמוד 27');
       initEvents();
       updateP25();
       updateD1();
@@ -1684,6 +1682,5 @@
 
     init();
   </script>
-
 </body>
 </html>
