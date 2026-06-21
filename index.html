@@ -569,7 +569,7 @@
         <span class="page-badge">כל המילים יחד · סדר אקראי</span>
       </div>
       <div class="card">
-        <p class="subtitle">תופיע מילה בקוריאנית. כתוב/כתבי את התרגום בעברית. אם יש טעות, התשובה לא תופיע; המילה תחזור לתור האקראי ותופיע שוב בהמשך. אחרי תשובה נכונה או שגויה יש מעבר אוטומטי.</p>
+        <p class="subtitle">תופיע מילה בקוריאנית. כתוב/כתבי את התרגום בעברית. יש עד 3 ניסיונות לכל מילה. אם יש טעות, התשובה לא תופיע; אחרי 3 טעויות המילה תחזור לתור האקראי ותופיע שוב בהמשך.</p>
         <div class="trainer-grid">
           <div class="prompt-card" aria-live="polite">
             <p class="prompt-label">המילה לתרגום</p>
@@ -817,8 +817,8 @@
   </div>
 
   <script>
-    const AUTO_NEXT_DELAY = 1050;
-    const AUTO_WRONG_DELAY = 1150;
+    const AUTO_NEXT_DELAY = 1500;
+    const AUTO_WRONG_DELAY = 2200;
 
     const countryBank = [
       { ko: '이스라엘', he: 'ישראל', answers: ['ישראל'] },
@@ -1021,6 +1021,7 @@
     let koVoice = null;
     let vocabQueue = [];
     let currentVocab = null;
+    let currentVocabAttempts = 0;
     let vocabDone = 0;
     let vocabMisses = 0;
     let vocabAutoTimer = null;
@@ -1259,6 +1260,7 @@
       vocabItems.forEach(item => { item.misses = 0; });
       vocabQueue = shuffle(vocabItems);
       currentVocab = null;
+      currentVocabAttempts = 0;
       vocabDone = 0;
       vocabMisses = 0;
       $('vocab-complete').classList.remove('visible');
@@ -1287,6 +1289,7 @@
       }
 
       currentVocab = vocabQueue.shift();
+      currentVocabAttempts = 0;
       $('vocab-prompt').textContent = currentVocab.ko;
       $('vocab-answer').focus();
       updateVocabStats();
@@ -1322,11 +1325,22 @@
       } else {
         item.misses += 1;
         vocabMisses += 1;
-        insertRandom(vocabQueue, item);
-        currentVocab = null;
+        currentVocabAttempts += 1;
         $('vocab-feedback').className = 'feedback no';
-        $('vocab-feedback').textContent = `לא נכון. לא מגלה את התשובה — המילה תחזור בהמשך. סך טעויות במילה הזו: ${item.misses}.`;
-        scheduleVocabNext(AUTO_WRONG_DELAY);
+
+        if (currentVocabAttempts < 3) {
+          $('vocab-feedback').textContent = `לא נכון. נסו שוב. ניסיון ${currentVocabAttempts} מתוך 3.`;
+          $('vocab-answer').disabled = false;
+          $('vocab-check').disabled = false;
+          $('vocab-answer').value = '';
+          $('vocab-answer').focus();
+        } else {
+          insertRandom(vocabQueue, item);
+          currentVocab = null;
+          currentVocabAttempts = 0;
+          $('vocab-feedback').textContent = 'לא נכון. המילה תחזור בהמשך.';
+          scheduleVocabNext(AUTO_WRONG_DELAY);
+        }
       }
       updateVocabStats();
     }
