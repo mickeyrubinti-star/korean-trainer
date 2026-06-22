@@ -524,6 +524,153 @@
 
     .completion.visible { display: block; }
 
+
+
+    .dialog-practice {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .practice-card {
+      border: 1px solid var(--line);
+      background: #fffdf9;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .practice-card h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      color: #332f2a;
+    }
+
+    .practice-card .small-note {
+      margin-bottom: 10px;
+    }
+
+    .sortable-list, .word-bank, .word-slots {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .sortable-list {
+      min-height: 120px;
+    }
+
+    .sortable-item {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 13px;
+      padding: 10px;
+      cursor: grab;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .sortable-item.dragging, .word-token.dragging {
+      opacity: 0.55;
+    }
+
+    .sortable-item.correct, .drop-slot.correct {
+      border-color: var(--correct);
+      background: #eef7ef;
+    }
+
+    .sortable-item.wrong, .drop-slot.wrong {
+      border-color: var(--wrong);
+      background: #fff0ee;
+    }
+
+    .sortable-text {
+      min-width: 0;
+      display: grid;
+      gap: 3px;
+    }
+
+    .sortable-speaker {
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .line-sort-actions {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      justify-content: end;
+    }
+
+    .word-slots {
+      grid-template-columns: repeat(auto-fit, minmax(86px, 1fr));
+    }
+
+    .drop-slot {
+      min-height: 48px;
+      border: 1px dashed #cfc5b8;
+      background: #fff;
+      border-radius: 12px;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .drop-slot::before {
+      content: attr(data-position);
+      position: absolute;
+      inset-inline-start: 8px;
+      top: 4px;
+      color: #b0a69a;
+      font-size: 11px;
+    }
+
+    .drop-slot.filled {
+      border-style: solid;
+      background: var(--bg-soft);
+    }
+
+    .word-bank {
+      min-height: 56px;
+      border: 1px dashed #d7cebf;
+      border-radius: 13px;
+      padding: 9px;
+      background: #fffbf5;
+      grid-template-columns: repeat(auto-fit, minmax(78px, max-content));
+      align-items: center;
+    }
+
+    .word-token {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      padding: 7px 11px;
+      cursor: grab;
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .word-token.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(98, 120, 93, 0.13);
+      background: var(--accent-soft);
+    }
+
+    .practice-source {
+      margin: 8px 0 0;
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 14px;
+    }
+
     @media (max-width: 820px) {
       body { padding: 16px 10px 34px; }
       .hero { padding: 24px 16px; border-radius: 22px; }
@@ -542,6 +689,7 @@
       }
       .line-actions { justify-content: start; }
       .choice-row { grid-template-columns: 1fr; }
+      .dialog-practice { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -569,7 +717,7 @@
         <span class="page-badge">כל המילים יחד · סדר אקראי</span>
       </div>
       <div class="card">
-        <p class="subtitle">תופיע מילה בקוריאנית. כתוב/כתבי את התרגום בעברית. לכל מילה יש עד שלושה ניסיונות. תשובה נכונה מוציאה את המילה מהתור. אחרי שלוש טעויות בלבד, התרגום מתגלה והמילה חוזרת לתור האקראי.</p>
+        <p class="subtitle">תופיע מילה בקוריאנית. כתוב/כתבי את התרגום בעברית. לכל מילה יש עד שלושה ניסיונות. תשובה נכונה מוציאה את המילה מהתור. אחרי שלוש טעויות בלבד, התרגום מתגלה והמילה חוזרת לתור האקראי. אפשר גם ללחוץ “לא יודע/ת” כדי לראות את התשובה ולהחזיר את המילה לתור בלי לספור זאת כטעות.</p>
         <div class="trainer-grid">
           <div class="prompt-card" aria-live="polite">
             <p class="prompt-label">המילה לתרגום</p>
@@ -578,7 +726,7 @@
               <input id="vocab-answer" class="answer-input" type="text" autocomplete="off" placeholder="כתוב/כתבי תרגום בעברית" />
               <button class="btn round" type="button" id="vocab-audio" title="השמע מילה">🔊</button>
               <button class="btn primary" type="button" id="vocab-check">בדיקה</button>
-              <button class="btn" type="button" id="vocab-next" hidden>המילה הבאה</button>
+              <button class="btn" type="button" id="vocab-next" hidden>לא יודע/ת — גלה והמשך</button>
             </div>
             <p id="vocab-feedback" class="feedback"></p>
             <div id="vocab-complete" class="completion">מעולה! סיימת את כל אוצר המילים בסבב הזה.</div>
@@ -590,7 +738,7 @@
               <div class="stat-box"><span class="stat-number" id="vocab-misses">0</span><span class="stat-label">טעויות</span></div>
             </div>
             <div class="progress-bar" aria-hidden="true"><div class="progress-fill" id="vocab-progress"></div></div>
-            <p class="small-note">הבדיקה מקבלת גם כמה ניסוחים בעברית, למשל: ארה״ב / ארצות הברית, תלמיד / סטודנט.</p>
+            <p class="small-note">הבדיקה מתעלמת מסימני פיסוק ורווחים מיותרים, ומקבלת כמה ניסוחים בעברית לכל מילה.</p>
             <button class="btn" type="button" id="vocab-reset">ערבב והתחל מחדש</button>
           </aside>
         </div>
@@ -684,6 +832,7 @@
           <button class="btn small" type="button" data-speak-dialog="p25">הקשב לכל השיחה</button>
         </div>
         <div class="chat-box" id="p25-lines"></div>
+        <div class="dialog-practice" id="p25-practice"></div>
       </div>
     </section>
 
@@ -736,6 +885,7 @@
           <button class="btn small" type="button" data-speak-dialog="d1">הקשב לכל הדיאלוג</button>
         </div>
         <div class="chat-box" id="d1-lines"></div>
+        <div class="dialog-practice" id="d1-practice"></div>
       </div>
     </section>
 
@@ -796,6 +946,7 @@
           <button class="btn small" type="button" data-speak-dialog="d2">הקשב לכל הדיאלוג</button>
         </div>
         <div class="chat-box" id="d2-lines"></div>
+        <div class="dialog-practice" id="d2-practice"></div>
       </div>
     </section>
 
@@ -876,6 +1027,7 @@
       { ko: '노래', he: 'שיר', answers: ['שיר', 'שירים'], grammar: true },
       { ko: '노래하다', he: 'לשיר', answers: ['לשיר', 'שר', 'שרה', 'שרים', 'שרות'], grammar: false },
       { ko: '네', he: 'כן', answers: ['כן'], grammar: false },
+      { ko: '빨리', he: 'מהר', answers: ['מהר', 'במהירות', 'זריז', 'זריזה', 'בזריזות', 'מהר מהר'], grammar: false },
       { ko: '사투리', he: 'ניב / דיאלקט', answers: ['ניב', 'ניבים', 'דיאלקט', 'דיאלקטים', 'מבטא מקומי', 'מבטאים מקומיים'], grammar: true },
       { ko: '제', he: 'שלי', answers: ['שלי'], grammar: false },
       { ko: '외모', he: 'מראה חיצוני', answers: ['מראה חיצוני', 'חזות', 'מראה', 'הופעה חיצונית'], grammar: true },
@@ -911,7 +1063,6 @@
       { ko: '인터넷', he: 'אינטרנט', answers: ['אינטרנט'], grammar: true },
       { ko: '원', he: 'וון / מטבע קוריאני', answers: ['וון', 'מטבע קוריאני', 'כסף קוריאני'], grammar: true },
       { ko: '꼬리', he: 'זנב', answers: ['זנב', 'זנבות'], grammar: true },
-      { ko: '까치', he: 'עקעק / עורבני', answers: ['עקעק', 'עורבני', 'ציפור עקעק'], grammar: true },
       { ko: '꼬마', he: 'ילד קטן / ילדה קטנה', answers: ['ילד קטן', 'ילדה קטנה', 'ילדים קטנים', 'ילדות קטנות', 'קטנטן', 'קטנטנה'], grammar: true },
       { ko: '토끼', he: 'ארנב', answers: ['ארנב', 'ארנבת', 'ארנבים', 'ארנבות'], grammar: true },
       { ko: '어깨', he: 'כתף', answers: ['כתף', 'כתפיים'], grammar: true },
@@ -944,7 +1095,6 @@
       { ko: '떡', he: 'עוגת אורז', answers: ['עוגת אורז', 'עוגות אורז', 'טוק'], grammar: true },
       { ko: '빵', he: 'לחם', answers: ['לחם', 'לחמים'], grammar: true },
       { ko: '쌀', he: 'אורז', answers: ['אורז'], grammar: true },
-      { ko: '쑥', he: 'לענה קוריאנית / עשב מרפא', answers: ['לענה קוריאנית', 'עשב מרפא קוריאני', 'סוק'], grammar: true },
       { ko: '찜', he: 'אידוי / מאכל מאודה', answers: ['אידוי', 'מאכל מאודה', 'תבשיל מאודה'], grammar: true },
       { ko: '뚜껑', he: 'מכסה', answers: ['מכסה', 'מכסים'], grammar: true },
       { ko: '씨름', he: 'היאבקות קוריאנית', answers: ['היאבקות קוריאנית', 'האבקות קוריאנית'], grammar: true },
@@ -1032,9 +1182,24 @@
     let grammarAutoTimer = null;
 
     const dialogLines = { p25: [], d1: [], d2: [] };
+    const wordPracticeState = { p25: {}, d1: {}, d2: {} };
 
     function $(id) {
       return document.getElementById(id);
+    }
+
+    function uniqueAnswers(values) {
+      const seen = new Set();
+      return values
+        .filter(Boolean)
+        .map(value => String(value).trim())
+        .filter(Boolean)
+        .filter(value => {
+          const key = normalizeHebrew(value) || value;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
     }
 
     function buildVocabItems(items) {
@@ -1043,16 +1208,16 @@
         const ko = String(item.ko || '').trim();
         if (!ko) return;
         const existing = map.get(ko);
-        const answers = [...(item.answers || []), item.he].filter(Boolean);
+        const answers = uniqueAnswers([...(item.answers || []), item.he]);
         if (existing) {
-          existing.answers = [...new Set([...(existing.answers || []), ...answers])];
+          existing.answers = uniqueAnswers([...(existing.answers || []), ...answers]);
           if (!existing.he && item.he) existing.he = item.he;
           existing.grammar = Boolean(existing.grammar || item.grammar);
         } else {
           map.set(ko, {
             ko,
             he: item.he || '',
-            answers: [...new Set(answers)],
+            answers,
             grammar: Boolean(item.grammar)
           });
         }
@@ -1243,7 +1408,8 @@
     function scheduleVocabNext(delay = AUTO_NEXT_DELAY) {
       clearVocabTimer();
       $('vocab-next').hidden = false;
-      $('vocab-next').textContent = 'דלג עכשיו';
+      $('vocab-next').disabled = false;
+      $('vocab-next').textContent = 'המשך עכשיו';
       vocabAutoTimer = window.setTimeout(showNextVocab, delay);
     }
 
@@ -1269,7 +1435,7 @@
     function showNextVocab() {
       clearVocabTimer();
       $('vocab-next').hidden = true;
-      $('vocab-next').textContent = 'המילה הבאה';
+      $('vocab-next').textContent = 'לא יודע/ת — גלה והמשך';
       $('vocab-check').disabled = false;
       $('vocab-answer').disabled = false;
       $('vocab-answer').value = '';
@@ -1281,6 +1447,7 @@
         $('vocab-prompt').textContent = 'סיימת!';
         $('vocab-answer').disabled = true;
         $('vocab-check').disabled = true;
+        $('vocab-next').hidden = true;
         $('vocab-complete').classList.add('visible');
         updateVocabStats();
         return;
@@ -1288,12 +1455,43 @@
 
       currentVocab = vocabQueue.shift();
       $('vocab-prompt').textContent = currentVocab.ko;
+      $('vocab-next').hidden = false;
+      $('vocab-next').disabled = false;
+      $('vocab-next').textContent = 'לא יודע/ת — גלה והמשך';
       $('vocab-answer').focus();
       updateVocabStats();
     }
 
+    function getAnswerText(item) {
+      return (item.answers && item.answers.length ? item.answers : [item.he]).join(' / ');
+    }
+
+    function skipCurrentVocab() {
+      clearVocabTimer();
+      if (!currentVocab) {
+        showNextVocab();
+        return;
+      }
+      const item = currentVocab;
+      const answerText = getAnswerText(item);
+      item.misses = 0;
+      insertRandom(vocabQueue, item);
+      currentVocab = null;
+      $('vocab-answer').disabled = true;
+      $('vocab-check').disabled = true;
+      $('vocab-next').disabled = false;
+      $('vocab-feedback').className = 'feedback warn';
+      $('vocab-feedback').textContent = `התשובה היא: ${answerText}. המילה תחזור בהמשך.`;
+      scheduleVocabNext(3200);
+      updateVocabStats();
+    }
+
     function advanceVocabButton() {
-      showNextVocab();
+      if (currentVocab && !$('vocab-answer').disabled) {
+        skipCurrentVocab();
+      } else {
+        showNextVocab();
+      }
     }
 
     function checkVocab() {
@@ -1333,7 +1531,7 @@
           $('vocab-check').disabled = false;
           $('vocab-answer').focus();
         } else {
-          const answerText = (item.answers && item.answers.length ? item.answers : [item.he]).join(' / ');
+          const answerText = getAnswerText(item);
           item.misses = 0;
           insertRandom(vocabQueue, item);
           currentVocab = null;
@@ -1486,12 +1684,323 @@
         row.appendChild(actions);
         container.appendChild(row);
       });
+
+      renderDialogPractice(key);
     }
 
     function toggleAllTranslations(key, visible) {
       document.querySelectorAll(`[id^="${key}-he-"]`).forEach(node => {
         node.classList.toggle('visible', visible);
       });
+    }
+
+
+    function renderDialogPractice(key) {
+      const container = $(`${key}-practice`);
+      if (!container) return;
+      const title = key === 'p25' ? 'שיחה קצרה' : key === 'd1' ? 'דיאלוג 1' : 'דיאלוג 2';
+      container.innerHTML = `
+        <div class="practice-card">
+          <h3>תרגול סידור הדיאלוג</h3>
+          <p class="small-note">גרור/גררי את השורות או השתמש/י בחיצים כדי להחזיר את ${title} לסדר הנכון.</p>
+          <div class="sortable-list" id="${key}-order-list"></div>
+          <div class="control-actions">
+            <button class="btn small" type="button" id="${key}-order-shuffle">ערבב שורות</button>
+            <button class="btn small primary" type="button" id="${key}-order-check">בדוק סדר</button>
+          </div>
+          <p id="${key}-order-feedback" class="feedback"></p>
+        </div>
+        <div class="practice-card">
+          <h3>תרגול גרירת מילים</h3>
+          <p class="small-note">בחרתי שורה מהדיאלוג. סדר/י את המילים במקומות הנכונים.</p>
+          <p class="practice-source" id="${key}-word-source"></p>
+          <div class="word-slots" id="${key}-word-slots"></div>
+          <div class="word-bank" id="${key}-word-bank" aria-label="בנק מילים"></div>
+          <div class="control-actions">
+            <button class="btn small" type="button" id="${key}-word-new">שורה אחרת</button>
+            <button class="btn small" type="button" id="${key}-word-reset">ערבב שוב</button>
+            <button class="btn small primary" type="button" id="${key}-word-check">בדוק מילים</button>
+          </div>
+          <p id="${key}-word-feedback" class="feedback"></p>
+        </div>
+      `;
+
+      $(`${key}-order-shuffle`).addEventListener('click', () => renderOrderPractice(key));
+      $(`${key}-order-check`).addEventListener('click', () => checkOrderPractice(key));
+      $(`${key}-word-new`).addEventListener('click', () => renderWordPractice(key, true));
+      $(`${key}-word-reset`).addEventListener('click', () => renderWordPractice(key, false));
+      $(`${key}-word-check`).addEventListener('click', () => checkWordPractice(key));
+
+      renderOrderPractice(key);
+      renderWordPractice(key, true);
+    }
+
+    function shuffledLineOrder(key) {
+      const lines = dialogLines[key] || [];
+      const order = shuffle(lines.map((line, index) => ({ line, index })));
+      if (order.length > 1 && order.every((item, index) => item.index === index)) {
+        order.push(order.shift());
+      }
+      return order;
+    }
+
+    function renderOrderPractice(key) {
+      const list = $(`${key}-order-list`);
+      const feedback = $(`${key}-order-feedback`);
+      if (!list) return;
+      feedback.textContent = '';
+      feedback.className = 'feedback';
+      list.innerHTML = '';
+
+      shuffledLineOrder(key).forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'sortable-item';
+        row.draggable = true;
+        row.dataset.correctIndex = String(item.index);
+        row.innerHTML = `
+          <div class="sortable-text">
+            <span class="sortable-speaker ko">${item.line.speaker}</span>
+            <span class="ko">${item.line.ko}</span>
+          </div>
+          <div class="line-sort-actions">
+            <button class="btn small" type="button" data-move="up" title="העבר למעלה">↑</button>
+            <button class="btn small" type="button" data-move="down" title="העבר למטה">↓</button>
+          </div>
+        `;
+        list.appendChild(row);
+      });
+
+      attachOrderDragEvents(key);
+      list.querySelectorAll('[data-move]').forEach(button => {
+        button.addEventListener('click', event => {
+          event.stopPropagation();
+          const row = button.closest('.sortable-item');
+          if (!row) return;
+          if (button.dataset.move === 'up' && row.previousElementSibling) {
+            list.insertBefore(row, row.previousElementSibling);
+          }
+          if (button.dataset.move === 'down' && row.nextElementSibling) {
+            list.insertBefore(row.nextElementSibling, row);
+          }
+          clearOrderMarks(key);
+        });
+      });
+    }
+
+    function attachOrderDragEvents(key) {
+      const list = $(`${key}-order-list`);
+      if (!list) return;
+      list.querySelectorAll('.sortable-item').forEach(item => {
+        item.addEventListener('dragstart', event => {
+          item.classList.add('dragging');
+          event.dataTransfer.effectAllowed = 'move';
+          event.dataTransfer.setData('text/plain', item.dataset.correctIndex);
+        });
+        item.addEventListener('dragend', () => item.classList.remove('dragging'));
+        item.addEventListener('dragover', event => event.preventDefault());
+        item.addEventListener('drop', event => {
+          event.preventDefault();
+          const dragging = list.querySelector('.dragging');
+          if (!dragging || dragging === item) return;
+          const rect = item.getBoundingClientRect();
+          const before = event.clientY < rect.top + rect.height / 2;
+          list.insertBefore(dragging, before ? item : item.nextSibling);
+          clearOrderMarks(key);
+        });
+      });
+      list.addEventListener('dragover', event => event.preventDefault());
+    }
+
+    function clearOrderMarks(key) {
+      const feedback = $(`${key}-order-feedback`);
+      if (feedback) {
+        feedback.textContent = '';
+        feedback.className = 'feedback';
+      }
+      document.querySelectorAll(`#${key}-order-list .sortable-item`).forEach(row => {
+        row.classList.remove('correct', 'wrong');
+      });
+    }
+
+    function checkOrderPractice(key) {
+      const list = $(`${key}-order-list`);
+      const feedback = $(`${key}-order-feedback`);
+      if (!list || !feedback) return;
+      const rows = [...list.querySelectorAll('.sortable-item')];
+      let correct = 0;
+      rows.forEach((row, index) => {
+        const ok = Number(row.dataset.correctIndex) === index;
+        row.classList.toggle('correct', ok);
+        row.classList.toggle('wrong', !ok);
+        if (ok) correct += 1;
+      });
+      if (correct === rows.length) {
+        feedback.className = 'feedback ok';
+        feedback.textContent = 'מעולה! כל השורות בסדר הנכון.';
+      } else {
+        feedback.className = 'feedback no';
+        feedback.textContent = `כמעט. ${correct} מתוך ${rows.length} שורות במקום הנכון.`;
+      }
+    }
+
+    function tokenizeKoreanLine(line) {
+      return String(line || '').trim().split(/\s+/).filter(Boolean);
+    }
+
+    function chooseWordPracticeLine(key, forceNew = false) {
+      const lines = dialogLines[key] || [];
+      const candidates = lines
+        .map((line, index) => ({ line, index, tokens: tokenizeKoreanLine(line.ko) }))
+        .filter(item => item.tokens.length > 1);
+      if (!candidates.length) return null;
+      const previous = wordPracticeState[key] ? wordPracticeState[key].lineIndex : null;
+      let pool = candidates;
+      if (forceNew && candidates.length > 1) {
+        pool = candidates.filter(item => item.index !== previous);
+      }
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function renderWordPractice(key, forceNew = false) {
+      const slots = $(`${key}-word-slots`);
+      const bank = $(`${key}-word-bank`);
+      const source = $(`${key}-word-source`);
+      const feedback = $(`${key}-word-feedback`);
+      if (!slots || !bank || !source || !feedback) return;
+
+      let chosen;
+      if (!forceNew && wordPracticeState[key] && Number.isInteger(wordPracticeState[key].lineIndex)) {
+        const lineIndex = wordPracticeState[key].lineIndex;
+        const line = (dialogLines[key] || [])[lineIndex];
+        if (line) chosen = { line, index: lineIndex, tokens: tokenizeKoreanLine(line.ko) };
+      }
+      if (!chosen || chosen.tokens.length <= 1) chosen = chooseWordPracticeLine(key, true);
+      if (!chosen) return;
+
+      wordPracticeState[key] = { lineIndex: chosen.index, selectedTokenId: null };
+      feedback.textContent = '';
+      feedback.className = 'feedback';
+      source.textContent = `${chosen.line.speaker} · שורה ${chosen.index + 1} בדיאלוג · ${chosen.tokens.length} מילים`;
+      slots.innerHTML = '';
+      bank.innerHTML = '';
+
+      chosen.tokens.forEach((token, index) => {
+        const slot = document.createElement('div');
+        slot.className = 'drop-slot';
+        slot.dataset.answer = token;
+        slot.dataset.position = String(index + 1);
+        slot.addEventListener('dragover', event => event.preventDefault());
+        slot.addEventListener('drop', event => {
+          event.preventDefault();
+          const tokenId = event.dataTransfer.getData('text/plain');
+          const tokenNode = document.querySelector(`[data-token-id="${tokenId}"]`);
+          if (tokenNode) placeTokenInSlot(key, tokenNode, slot);
+        });
+        slot.addEventListener('click', () => {
+          const selected = getSelectedToken(key);
+          if (selected) placeTokenInSlot(key, selected, slot);
+        });
+        slots.appendChild(slot);
+      });
+
+      shuffle(chosen.tokens.map((token, index) => ({ token, index }))).forEach(item => {
+        const token = document.createElement('button');
+        token.type = 'button';
+        token.className = 'word-token ko';
+        token.draggable = true;
+        token.textContent = item.token;
+        token.dataset.tokenId = `${key}-token-${Date.now()}-${item.index}-${Math.random().toString(16).slice(2)}`;
+        token.addEventListener('dragstart', event => {
+          token.classList.add('dragging');
+          event.dataTransfer.effectAllowed = 'move';
+          event.dataTransfer.setData('text/plain', token.dataset.tokenId);
+        });
+        token.addEventListener('dragend', () => token.classList.remove('dragging'));
+        token.addEventListener('click', () => selectWordToken(key, token));
+        bank.appendChild(token);
+      });
+
+      bank.addEventListener('dragover', event => event.preventDefault());
+      bank.addEventListener('drop', event => {
+        event.preventDefault();
+        const tokenId = event.dataTransfer.getData('text/plain');
+        const tokenNode = document.querySelector(`[data-token-id="${tokenId}"]`);
+        if (tokenNode) returnTokenToBank(key, tokenNode);
+      });
+    }
+
+    function selectWordToken(key, token) {
+      document.querySelectorAll(`#${key}-word-bank .word-token, #${key}-word-slots .word-token`).forEach(node => {
+        node.classList.remove('selected');
+      });
+      wordPracticeState[key].selectedTokenId = token.dataset.tokenId;
+      token.classList.add('selected');
+    }
+
+    function getSelectedToken(key) {
+      const selectedId = wordPracticeState[key] ? wordPracticeState[key].selectedTokenId : null;
+      return selectedId ? document.querySelector(`[data-token-id="${selectedId}"]`) : null;
+    }
+
+    function placeTokenInSlot(key, token, slot) {
+      const bank = $(`${key}-word-bank`);
+      const existing = slot.querySelector('.word-token');
+      if (existing && existing !== token) bank.appendChild(existing);
+      slot.appendChild(token);
+      slot.classList.add('filled');
+      slot.classList.remove('correct', 'wrong');
+      token.classList.remove('selected');
+      wordPracticeState[key].selectedTokenId = null;
+      clearWordFeedback(key);
+    }
+
+    function returnTokenToBank(key, token) {
+      const bank = $(`${key}-word-bank`);
+      if (!bank) return;
+      bank.appendChild(token);
+      token.classList.remove('selected');
+      const slots = document.querySelectorAll(`#${key}-word-slots .drop-slot`);
+      slots.forEach(slot => {
+        slot.classList.toggle('filled', Boolean(slot.querySelector('.word-token')));
+        slot.classList.remove('correct', 'wrong');
+      });
+      wordPracticeState[key].selectedTokenId = null;
+      clearWordFeedback(key);
+    }
+
+    function clearWordFeedback(key) {
+      const feedback = $(`${key}-word-feedback`);
+      if (feedback) {
+        feedback.textContent = '';
+        feedback.className = 'feedback';
+      }
+    }
+
+    function checkWordPractice(key) {
+      const slots = [...document.querySelectorAll(`#${key}-word-slots .drop-slot`)];
+      const feedback = $(`${key}-word-feedback`);
+      if (!slots.length || !feedback) return;
+      let correct = 0;
+      let filled = 0;
+      slots.forEach(slot => {
+        const token = slot.querySelector('.word-token');
+        const ok = Boolean(token) && token.textContent.trim() === slot.dataset.answer;
+        if (token) filled += 1;
+        slot.classList.toggle('filled', Boolean(token));
+        slot.classList.toggle('correct', ok);
+        slot.classList.toggle('wrong', Boolean(token) && !ok);
+        if (ok) correct += 1;
+      });
+      if (correct === slots.length) {
+        feedback.className = 'feedback ok';
+        feedback.textContent = 'מעולה! כל המילים במקום הנכון.';
+      } else if (filled < slots.length) {
+        feedback.className = 'feedback warn';
+        feedback.textContent = `חסרות עדיין ${slots.length - filled} מילים.`;
+      } else {
+        feedback.className = 'feedback no';
+        feedback.textContent = `יש ${correct} מתוך ${slots.length} מילים במקום הנכון.`;
+      }
     }
 
     function updateP25() {
